@@ -1,22 +1,34 @@
+//
+//    Description:  The sum of the primes below 10 is 2 + 3 + 5 + 7 = 17.
+//
+//       Question:  Find the sum of all the primes below two million.
+//
+//       Compiler:  go
+//
+//          Usage:  go run pe-10_sumPrimes_sieveAlgo.go
+//
+//        License:  GNU General Public License
+//      Copyright:  Copyright (c) 2014, Frank Milde
+
 package main
 
 import "fmt"
 
 func main() {
-	var limit uint64 = 20000000
+	var limit uint64 = 2000000
 
+	// using the
+	// https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes
 	primes := FindPrimes(limit)
-	   sum := Sum(primes)
+	sum := Sum(primes)
 
 	fmt.Println(len(primes), "th prime: ", primes[len(primes)-1])
 	fmt.Println("sum: ", sum)
-	//fmt.Println("   :  142913828922")
 }
-
 
 func Sum(vector []uint64) uint64 {
 	var sum uint64 = 0
-	for i := range vector {
+	for _, e := range vector {
 		sum += vector[i]
 	}
 	return sum

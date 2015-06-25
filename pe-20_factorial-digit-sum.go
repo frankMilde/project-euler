@@ -1,31 +1,19 @@
-// =============================================================================
-//
-//       Filename:  pe-20_factorial-digit-sum.go
 //
 //    Description:  n! means n × (n − 1) × ... × 3 × 2 × 1
 //
 //                  For example, 10! = 10 × 9 × ... × 3 × 2 × 1 = 3628800,
-//                  and the sum of the digits in the number 10! is 
+//                  and the sum of the digits in the number 10! is
 //                  3 + 6 + 2 + 8 + 8 + 0 + 0 = 27.
-//               		
-//       Question:  Find the sum of the digits in the number 100!
 //
-//        Version:  1.0
-//        Created:  Mon May 27 17:34:38 2013
-//       Revision:  
+//       Question:  Find the sum of the digits in the number 100!
 //
 //       Compiler:  go
 //
-//         Author:  FRANK MILDE (), frank@itp.physik.tu-berlin.de
-//   Organization:  TU Berlin
-//
-//           TODO:
-// =============================================================================
+//        License:  GNU General Public License
+//      Copyright:  Copyright (c) 2015, Frank Milde
+
 package main
 
-//------------------------------------------------------------------------------
-//  Includes
-//------------------------------------------------------------------------------
 import (
 	"bytes"
 	"flag"
@@ -36,19 +24,13 @@ import (
 	"time"
 )
 
-//------------------------------------------------------------------------------
 //  Global variables
-//------------------------------------------------------------------------------
 var ascii_digit_offset uint8 = 48
 var initFactorial uint64
 
 const maxUint64 uint64 = 1<<32 - 1
 const ESC string = "\033["
 
-// ===  FUNCTION  ==============================================================
-//         Name:  main
-//  Description:  
-// =============================================================================
 func main() {
 	ClearTerminalScreen()
 	start := time.Now()
@@ -74,11 +56,8 @@ func main() {
 //-----------------------------------------------------------------------------
 // {{{
 
-// ===  FUNCTION  ==============================================================
-//         Name:  init
-//  Description:  Needed by the flag package to define the variables that are
-//                parsed from the command line
-// =============================================================================
+// Init is needed by the flag package to define the variables that are
+// parsed from the command line
 func init() {
 	const (
 		defaultFactorial = 100
@@ -88,14 +67,10 @@ func init() {
 	flag.Uint64Var(&initFactorial, "f", defaultFactorial, usage+" (shorthand)")
 }
 
-// ===  FUNCTION  ==============================================================
-//         Name:  Product
-//  Description:  Calculates the product of two arbitrary long numbers as a
-//                number of sum: a*b = a+a+...+a+a
-//                                        b-times
-//                The numbers are represented as arrays of uint8s in reverse
-//                order.
-// =============================================================================
+// Product calculates the product of two arbitrary long numbers as a number
+// of sum: a*b = a+a+...+a+a
+//                b-times
+// The numbers are represented as arrays of uint8s in reverse order.
 func Product(a, b []uint8) []uint8 {
 	var result []uint8 = a
 
@@ -113,15 +88,12 @@ func Product(a, b []uint8) []uint8 {
 	return result
 }
 
-// ===  FUNCTION  ==============================================================
-//         Name:  Sum
-//  Description:  Sums two integers by:
-//								(1) Checking which number (represented by an array of single
-//								    digits) has more digits 
-//  							(2) The number with fewer digits is filled with zeros until
-//  							    both arrays have an equal length
-//								(3) Performs the addition of the two numbers
-// =============================================================================
+// Sum two integers by:
+// (1) Checking which number (represented by an array of single
+//     digits) has more digits
+// (2) The number with fewer digits is filled with zeros until
+//     both arrays have an equal length
+// (3) Performs the addition of the two numbers
 func Sum(a, b []uint8) []uint8 {
 	switch {
 	case len(a) < len(b):
@@ -132,14 +104,10 @@ func Sum(a, b []uint8) []uint8 {
 	return Addition(a, b)
 }
 
-// ===  FUNCTION  ==============================================================
-//         Name:  Addition
-//  Description:  Adds two numbers (of equal length) by a pen-and-paper addition
-//  							algorithm. Numbers are given in a form where the first element
-//  							of the vector contains the unit position, second element
-//  							contains the decade, ect.
-//                See also function VectorizeString()
-//  =============================================================================
+// Addition adds two numbers (of equal length) by a pen-and-paper addition
+// algorithm. Numbers are given in a form where the first element of the
+// vector contains the unit position, second element contains the decade,
+// ect.  See also function VectorizeString()
 func Addition(a, b []uint8) []uint8 {
 	var sum uint8 = 0
 	var carry uint8 = 0
@@ -166,11 +134,8 @@ func Addition(a, b []uint8) []uint8 {
 	return result
 }
 
-// ===  FUNCTION  ==============================================================
-//         Name:  FillSmallerWithZeros
-//  Description:  Fill the smaller integer slice with zeros until the length of
-//  							both slices is equal
-// =============================================================================
+// FillSmallerWithZeros fills the smaller integer slice with zeros until the
+// length of both slices is equal
 func FillSmallerWithZeros(smaller, bigger []uint8) ([]uint8, []uint8) {
 	diff := len(bigger) - len(smaller)
 
@@ -180,11 +145,8 @@ func FillSmallerWithZeros(smaller, bigger []uint8) ([]uint8, []uint8) {
 	return smaller, bigger
 }
 
-// ===  FUNCTION  ==============================================================
-//         Name:  Stringify
-//  Description:  Transforms a vector of digits into a string, like
-//  							[1 2 3] -> "321"
-//  =============================================================================
+// Stringify Transforms a vector of digits into a string, like
+// [1 2 3] -> "321"
 func Stringify(number []uint8) string {
 	length := len(number)
 	var string_number []byte
@@ -199,13 +161,10 @@ func Stringify(number []uint8) string {
 	return buffer.String()
 }
 
-// ===  FUNCTION  ==============================================================
-//         Name:  Vectorize
-//  Description:  Transforms a string or uint64 of digits into an vector of
-//                digits, and reversing the order, so that the first element of 
-//                the vector is the unit position, the second the decade 
-//                position, etc. like "321"  -> [1 2 3]
-//  =============================================================================
+// Vectorize Transforms a string or uint64 of digits into an vector of
+// digits, and reversing the order, so that the first element of the vector
+// is the unit position, the second the decade position,
+// etc. like "321"  -> [1 2 3]
 func VectorizeUint64(number uint64) []uint8 {
 	stringNumber := strconv.FormatUint(number, 10)
 	length := len(stringNumber)
@@ -218,7 +177,6 @@ func VectorizeUint64(number uint64) []uint8 {
 	}
 	return vectorNumber
 }
-
 func VectorizeString(number string) []uint8 {
 	length := len(number)
 
@@ -230,7 +188,6 @@ func VectorizeString(number string) []uint8 {
 	}
 	return vector_number
 }
-
 func VectorizeAllStrings(stringNumbers []string) [][]uint8 {
 	var vectorNumbers [][]uint8
 
@@ -240,20 +197,11 @@ func VectorizeAllStrings(stringNumbers []string) [][]uint8 {
 	return vectorNumbers
 }
 
-// ===  FUNCTION  ==============================================================
-//         Name:  ClearTerminalScreen
-//  Description:  Clears the terminal screen to have nice output
-// =============================================================================
 func ClearTerminalScreen() {
 	os.Stdout.Write([]byte("\033[2J"))
 	os.Stdout.Write([]byte("\033[H"))
 	os.Stdout.Write([]byte("\n"))
 }
-
-// ===  FUNCTION  ==============================================================
-//         Name:  DisplayProgressBar
-//  Description:  
-// =============================================================================
 func DisplayProgressBar(current, total uint64, action string) {
 	if total > 2 {
 		total--
@@ -284,11 +232,6 @@ func DisplayProgressBar(current, total uint64, action string) {
 
 	os.Stdout.Write([]byte(prefix + bar_start + bar + bar_end + "\r" + action))
 }
-
-// ===  FUNCTION  ==============================================================
-//         Name:  DisplayResults
-//  Description:  Pretty format of the results
-// =============================================================================
 func DisplayResults(factorial []uint8) {
 	var sumOfDigits uint64
 	for _, v := range factorial {

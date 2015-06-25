@@ -1,3 +1,14 @@
+//
+//       Question:  Work out the first ten digits of the sum of the
+//                  one-hundred 50-digit numbers in file numbers.txt.
+//
+//       Compiler:  go
+//
+//          Usage:  go run pe-13_large-sum.go
+//
+//        License:  GNU General Public License
+//      Copyright:  Copyright (c) 2014, Frank Milde
+
 package main
 
 import (
@@ -15,7 +26,6 @@ import (
 var ascii_digit_offset uint8 = 48
 var fileName string
 
-
 func main() {
 	ClearTerminalScreen()
 	start := time.Now()
@@ -30,6 +40,7 @@ func main() {
 	vectorNumbers := VectorizeAll(stringNumbers)
 	summedNumbers := vectorNumbers[0]
 
+	// Do a pen-and-paper summation of all numbers
 	for i := 1; i != len(vectorNumbers); i++ {
 		summedNumbers = Sum(summedNumbers, vectorNumbers[i])
 	}
@@ -52,14 +63,14 @@ func init() {
 		usage           = "file name from which to read-in numbers"
 	)
 	flag.StringVar(&fileName, "file", defaultFileName, usage)
-	flag.StringVar(&fileName, "f",    defaultFileName, usage+" (shorthand)")
+	flag.StringVar(&fileName, "f", defaultFileName, usage+" (shorthand)")
 }
 
 // ===  FUNCTION  ==============================================================
 //         Name:  Sum
 //  Description:  Sums two integers by:
 //								(1) Checking which number (represented by an array of single
-//								    digits) has more digits 
+//								    digits) has more digits
 //  							(2) The number with fewer digits is filled with zeros until
 //  							    both arrays have an equal length
 //								(3) Performs the addition of the two numbers
@@ -182,7 +193,7 @@ func ClearTerminalScreen() {
 
 // ===  FUNCTION  ==============================================================
 //         Name:  DisplayProgressBar
-//  Description:  
+//  Description:
 // =============================================================================
 func DisplayProgressBar(current, total int, action string) {
 	percent := current * 100 / total

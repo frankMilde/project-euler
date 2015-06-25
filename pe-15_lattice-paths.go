@@ -1,3 +1,19 @@
+//
+//    Description:  Starting in the top left corner of a 2×2 grid, and only
+//                  being able to move to the right and down, there are
+//                  exactly 6 routes to the bottom right corner.
+//
+//       Question:  How many such routes are there through a 20×20 grid?
+//
+//       Compiler:  go
+//
+//          Usage:  go run pe-15_lattice-paths.go -g 20
+//
+//                  For a 1000x1000 grid the calc needs 2 sec.
+//
+//        License:  GNU General Public License
+//      Copyright:  Copyright (c) 2014, Frank Milde
+
 package main
 
 import (
@@ -15,8 +31,6 @@ var gridSize uint64
 
 const maxUint64 uint64 = 1<<32 - 1
 
-const ESC string = "\033["
-
 type PrimeFactor struct {
 	prime uint64
 	exp   uint64
@@ -30,6 +44,15 @@ func main() {
 
 	flag.Parse()
 
+	// Doing some combinatorics we find that the number of path is given by
+	// (gridSize*2)! / (gridSize! * gridSize!)
+	// For big numbers these factorials are to big to fit into an uint64 and
+	// do the division directly. We first have to reduce the fraction by using
+	// the fact that 5!/3! = (1*2*3*4*5)/(1*2*3) = 4*5
+	// The best way to do so is by finding the factorization of each number,
+	// e.g. 9= 3*3 = 3^2  or  20 = 4*5 = 2^2 * 5.
+	// Then we can simply reduce the exponentials of the numerator and
+	// denominator.
 	numerator := FactorizedFactorial(gridSize * 2)
 	denominator := ProdFactor(FactorizedFactorial(gridSize), FactorizedFactorial(gridSize))
 	div := DivFactor(numerator, denominator)
@@ -111,7 +134,7 @@ func DivFactor(numerator, denominator Factorization) Factorization {
 //  Description:  Sorts and Simplifies a factorization:
 //                5^1 * 2^2 * 5^3 * 2^1 = 2^3 * 5^4
 //        Input:  A Factorization
-//       Output:  A sorted Factorization 
+//       Output:  A sorted Factorization
 // =============================================================================
 func SimplifyFactorization(f Factorization) Factorization {
 	occuringPrimes := FindOccuringPrimes(f)
@@ -127,11 +150,11 @@ func SimplifyFactorization(f Factorization) Factorization {
 //                sorted prime array and for each prime iteraters over the
 //                factorization and summes all occuring exponents of the given
 //                prime.
-//        Input:  (1) An arry with the sorted primes of the factorization 
+//        Input:  (1) An arry with the sorted primes of the factorization
 //                   [2 5 7]
 //                (2) the factorization itsself
-//                
-//       Output:  A compacted factorization 
+//
+//       Output:  A compacted factorization
 //                5^1 * 2^2 * 7^1 * 5^3 * 2^1 --> 2^3 * 5^4 *7^1
 // =============================================================================
 func CompactFactorization(sortedPrimes []uint64, factorization Factorization) Factorization {
@@ -174,7 +197,7 @@ func Sort(a []uint64) []uint64 {
 //  Description:  Finds all primes of a factorization
 //                5^1 * 2^2 * 5^3 * 2^1 ->  [5 2 ]
 //        Input:  A Factorization
-//       Output:  A sorted slice of primes 
+//       Output:  A sorted slice of primes
 // =============================================================================
 func FindOccuringPrimes(f Factorization) []uint64 {
 	l := len(f)
@@ -198,10 +221,10 @@ func FindOccuringPrimes(f Factorization) []uint64 {
 
 // ===  FUNCTION  ==============================================================
 //         Name:  Factorize
-//  Description:  Finds the factorization into exponents e of primes p for a 
+//  Description:  Finds the factorization into exponents e of primes p for a
 //                given number according to:
-//                N=p1^e1 * p2^e2 * ... *  pn^en  
-//                To do so, the input number will be repeatedly divorced. 
+//                N=p1^e1 * p2^e2 * ... *  pn^en
+//                To do so, the input number will be repeatedly divorced.
 //        Input:  A number
 //       Output:  Factorization type (alias for []primeFactor) with the
 //                primeFactor struct
@@ -246,14 +269,14 @@ func Factorize(number uint64) Factorization {
 func ReverseFactorization(f Factorization) string {
 	var result []uint8 = []uint8{1}
 
-fmt.Print("\n\n")
+	fmt.Print("\n\n")
 	for i, v := range f {
 		prime := Vectorize(strconv.FormatUint(v.prime, 10))
 		result = Product(result, Pow(prime, v.exp))
 		DisplayProgressBar(i, len(f)-1, "Calculating... ")
 	}
 
-fmt.Print("\n\n")
+	fmt.Print("\n\n")
 	return Stringify(result)
 }
 
@@ -299,7 +322,7 @@ func Product(a, b []uint8) []uint8 {
 //         Name:  Sum
 //  Description:  Sums two integers by:
 //								(1) Checking which number (represented by an array of single
-//								    digits) has more digits 
+//								    digits) has more digits
 //  							(2) The number with fewer digits is filled with zeros until
 //  							    both arrays have an equal length
 //								(3) Performs the addition of the two numbers
@@ -367,7 +390,7 @@ func FillSmallerWithZeros(smaller, bigger []uint8) ([]uint8, []uint8) {
 // ===  FUNCTION  ==============================================================
 //         Name:  FactorizedFactorial
 //  Description:  returns the Factorial in prime factorized form:
-//                10! = 
+//                10! =
 // =============================================================================
 func FactorizedFactorial(n uint64) Factorization {
 	var f Factorization
@@ -408,6 +431,7 @@ func (f PrimeFactor) String() string {
 	primeTotal += primeString + strings.Repeat(" ", numberOfExpDigits) + " "
 
 	// cursor movment
+	const ESC string = "\033["
 	var cursorUp string = ESC + "1A"
 	var cursorDown string = ESC + "1B"
 	var cursorBack string = ESC +
@@ -473,7 +497,7 @@ func VectorizeAll(stringNumbers []string) [][]uint8 {
 
 // ===  FUNCTION  ==============================================================
 //         Name:  GeneratePanicMsg
-//  Description:  
+//  Description:
 // =============================================================================
 func GeneratePanicMsg(limit uint64) string {
 	overMaxElements := limit - maxUint64
@@ -496,7 +520,7 @@ func ClearTerminalScreen() {
 
 // ===  FUNCTION  ==============================================================
 //         Name:  DisplayProgressBar
-//  Description:  
+//  Description:
 // =============================================================================
 func DisplayProgressBar(current, total int, action string) {
 	percent := current * 100 / total
@@ -533,7 +557,7 @@ func DisplayResults(number uint64, length uint64) {
 
 // ===  FUNCTION  ==============================================================
 //         Name:  CheckLimitIsOkOrDie
-//  Description:  If user input of "limit" exceed the max number of slice 
+//  Description:  If user input of "limit" exceed the max number of slice
 //                elements: Panic
 // =============================================================================
 func CheckNumberIsOkOrDie(limit uint64) {

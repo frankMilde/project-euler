@@ -1,3 +1,47 @@
+//
+//    Description:  By starting at the top of the triangle below and moving to
+//                  adjacent numbers on the row below, the maximum total
+//                  from top to bottom is 23.
+//
+//                                    3
+//                                   7 4
+//                                  2 4 6
+//                                 8 5 9 3
+//
+//                  That is, 3 + 7 + 4 + 9 = 23.
+//
+//                  Find the maximum total from top to bottom of the
+//                  triangle below:
+//
+//                                              75
+//                                            95  64
+//                                          17  47  82
+//                                        18  35  87  10
+//                                      20  04  82  47  65
+//                                    19  01  23  75  03  34
+//                                  88  02  77  73  07  63  67
+//                                99  65  04  28  06  16  70  92
+//                              41  41  26  56  83  40  80  70  33
+//                            41  48  72  33  47  32  37  16  94  29
+//                          53  71  44  65  25  43  91  52  97  51  14
+//                        70  11  33  28  77  73  17  78  39  68  17  57
+//                      91  71  52  38  17  14  91  43  58  50  27  29  48
+//                    63  66  04  68  89  53  67  30  73  16  69  87  40  31
+//                  04  62  98  27  23  09  70  98  73  93  38  53  60  04  23
+//
+//                  NOTE: As there are only 16384 routes, it is possible to
+//                  solve this problem by trying every route. However,
+//                  Problem 67, is the same challenge with a triangle
+//                  containing one-hundred rows; it cannot be solved by
+//                  brute force, and requires a clever method! ;o)
+//
+//           TODO:  Could not solve it :(.
+//
+//       Compiler:  go
+//
+//        License:  GNU General Public License
+//      Copyright:  Copyright (c) 2015, Frank Milde
+
 package main
 
 import (
@@ -17,10 +61,9 @@ type Reference [][]bool
 type Ref [][]int
 
 type Path struct {
-	path int []
-		weigth int
+	path   []int
+	weigth int
 }
-
 
 //global variables
 var fileName string
@@ -31,29 +74,29 @@ func main() {
 
 	flag.Parse()
 
-		t, err := ReadNumbersFromFile(fileName)
-		if err != nil {
-			panic(err)
-		}
+	t, err := ReadNumbersFromFile(fileName)
+	if err != nil {
+		panic(err)
+	}
 
-//	t := Triangle{{75}, {95, 64}, {17, 47, 82}, {18, 35, 87, 10}, {20, 4, 82, 47, 65}, {75, 1, 23,
-		//19, 3, 34}}
+	//	t := Triangle{{75}, {95, 64}, {17, 47, 82}, {18, 35, 87, 10}, {20, 4, 82, 47, 65}, {75, 1, 23,
+	//19, 3, 34}}
 	fmt.Print(t, "\n\n")
 
 	r := CreateReference2(t)
-	r = FindNewMax2(t, r,1)
-	iterations:=2
+	r = FindNewMax2(t, r, 1)
+	iterations := 2
 
 	for HasAtLeastOneConnectionBetweenEachLine2(r) == false {
-		r = FindNewMax2(t, r,iterations)
-			iterations++
+		r = FindNewMax2(t, r, iterations)
+		iterations++
 	}
 
-//		r = FindNewMax2(t, r,iterations)
-//			iterations++
+	//		r = FindNewMax2(t, r,iterations)
+	//			iterations++
 
 	fmt.Println("Each line has at least one connections after", iterations,
-			"iterations:\n\n",r)
+		"iterations:\n\n", r)
 
 	end := time.Now()
 	fmt.Println("\n\nrun time:", end.Sub(start))
@@ -86,7 +129,7 @@ func CreateReference(t Triangle) Reference {
 	return ref
 }
 
-func CreateReference2(t Triangle) Ref{
+func CreateReference2(t Triangle) Ref {
 	ref := make(Ref, len(t))
 
 	for i, v := range t {
@@ -94,9 +137,10 @@ func CreateReference2(t Triangle) Ref{
 	}
 	return ref
 }
+
 // ===  FUNCTION  ==============================================================
 //         Name:  HasAtLeastOneConnectionBetweenEachLine
-//  Description:  
+//  Description:
 // =============================================================================
 func HasAtLeastOneConnectionBetweenEachLine(r Reference) bool {
 	var canGetToNextLine bool
@@ -113,26 +157,26 @@ func HasAtLeastOneConnectionBetweenEachLine(r Reference) bool {
 				//are there marked numbers in next line?
 				if r[nextLine][left] == false && r[nextLine][right] == false {
 					canGetToNextLine = false
-	//				fmt.Println("Not getting From", line+1, number+1, "to", nextLine+1)
-	//				fmt.Println(r[line])
-	//				fmt.Println(r[nextLine])
-				}else{
-					canGetToNextLine=true
+					//				fmt.Println("Not getting From", line+1, number+1, "to", nextLine+1)
+					//				fmt.Println(r[line])
+					//				fmt.Println(r[nextLine])
+				} else {
+					canGetToNextLine = true
 				}
 			}
-			if canGetToNextLine==true{
+			if canGetToNextLine == true {
 				break
 			}
 		}
-			if canGetToNextLine==false{
-				break
-			}
+		if canGetToNextLine == false {
+			break
+		}
 	}
 	return canGetToNextLine
 }
 
 func HasAtLeastOneConnectionBetweenEachLine2(r Ref) bool {
-	var canGetToNextLine bool=false
+	var canGetToNextLine bool = false
 	//fmt.Println("Checking\n\n", r)
 
 	for line := 0; line != len(r)-1; line++ {
@@ -146,23 +190,24 @@ func HasAtLeastOneConnectionBetweenEachLine2(r Ref) bool {
 				//are there marked numbers in next line?
 				if r[nextLine][left] == 0 && r[nextLine][right] == 0 {
 					canGetToNextLine = false
-	//				fmt.Println("Not getting From", line+1, number+1, "to", nextLine+1)
-	//				fmt.Println(r[line])
-	//				fmt.Println(r[nextLine])
-				}else{
-					canGetToNextLine=true
+					//				fmt.Println("Not getting From", line+1, number+1, "to", nextLine+1)
+					//				fmt.Println(r[line])
+					//				fmt.Println(r[nextLine])
+				} else {
+					canGetToNextLine = true
 				}
 			}
-			if canGetToNextLine==true{
+			if canGetToNextLine == true {
 				break
 			}
 		}
-			if canGetToNextLine==false{
-				break
-			}
+		if canGetToNextLine == false {
+			break
+		}
 	}
 	return canGetToNextLine
 }
+
 /*
 func HasAPath (r Ref,it int) bool {
 	var hasAPath bool=false
@@ -176,7 +221,7 @@ func HasAPath (r Ref,it int) bool {
 */
 // ===  FUNCTION  ==============================================================
 //         Name:  FindNewMax
-//  Description:  
+//  Description:
 // =============================================================================
 func FindNewMax(t Triangle, r Reference) Reference {
 
@@ -196,7 +241,7 @@ func FindNewMax(t Triangle, r Reference) Reference {
 	return r
 }
 
-func FindNewMax2(t Triangle, r Ref, it int) Ref{
+func FindNewMax2(t Triangle, r Ref, it int) Ref {
 
 	for line := 0; line != len(t); line++ {
 		var max int
@@ -213,9 +258,9 @@ func FindNewMax2(t Triangle, r Ref, it int) Ref{
 	}
 	return r
 }
-func FindNewGlobalMax(t Triangle, r Ref, it int) Ref{
+func FindNewGlobalMax(t Triangle, r Ref, it int) Ref {
 
-		var max int
+	var max int
 	for line := 0; line != len(t); line++ {
 		for number := 0; number != len(t[line]); number++ {
 			if max < t[line][number] && r[line][number] == 0 {
@@ -233,10 +278,11 @@ func FindNewGlobalMax(t Triangle, r Ref, it int) Ref{
 
 	return r
 }
+
 // ===  IMPLEMENT STRING INTERFACE  ============================================
 //         Name:  String
 //  Description:  Defines how a Triangle type should be printed when using any of
-//                the standard fmt methods. 
+//                the standard fmt methods.
 // =============================================================================
 func (t Triangle) String() string {
 	var s string
@@ -246,7 +292,7 @@ func (t Triangle) String() string {
 		var sumOfLineElements int
 		for j := 0; j != len(t[i]); j++ {
 			number := t[i][j]
-								sumOfLineElements+=number
+			sumOfLineElements += number
 			if number < 10 {
 				s += " " + strconv.Itoa(number)
 			} else {
@@ -290,11 +336,11 @@ func (r Ref) String() string {
 		for j := 0; j != i+1; j++ {
 			number := r[i][j]
 			switch {
-				case number ==0:
-					s+= "__"
-				case number < 10 :
+			case number == 0:
+				s += "__"
+			case number < 10:
 				s += " " + strconv.Itoa(number)
-				case number >=10:
+			case number >= 10:
 				s += strconv.Itoa(number)
 			}
 			s += "  "
@@ -303,6 +349,7 @@ func (r Ref) String() string {
 	}
 	return s
 }
+
 // ===  FUNCTION  ==============================================================
 //         Name:  ClearTerminalScreen
 //  Description:  Clears the terminal screen to have nice output
@@ -315,7 +362,7 @@ func ClearTerminalScreen() {
 
 // ===  FUNCTION  ==============================================================
 //         Name:  DisplayProgressBar
-//  Description:  
+//  Description:
 // =============================================================================
 func DisplayProgressBar(current, total int, action string) {
 	percent := current * 100 / total

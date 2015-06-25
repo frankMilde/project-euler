@@ -1,3 +1,14 @@
+//
+//    Description:  2^15 = 32768 and the sum of its digits is
+//                  3 + 2 + 7 + 6 + 8 = 26.
+//
+//       Question:  What is the sum of the digits of the number 21000?
+//
+//       Compiler:  go
+//
+//        License:  GNU General Public License
+//      Copyright:  Copyright (c) 2015, Frank Milde
+
 package main
 
 import (
@@ -28,10 +39,9 @@ func main() {
 	result := []uint8{1}
 	var i uint64
 
-	for i=1;i!=f;i++{
-		result= Product(result,VectorizeUint64(i))
+	for i = 1; i != f; i++ {
+		result = Product(result, VectorizeUint64(i))
 	}
-
 
 	DisplayResults(result)
 
@@ -40,7 +50,7 @@ func main() {
 }
 
 func VectorizeUint64(number uint64) []uint8 {
-stringNumber := strconv.FormatUint(number,10)
+	stringNumber := strconv.FormatUint(number, 10)
 	length := len(stringNumber)
 
 	var vectorNumber []uint8
@@ -51,6 +61,7 @@ stringNumber := strconv.FormatUint(number,10)
 	}
 	return vectorNumber
 }
+
 // ===  FUNCTION  ==============================================================
 //         Name:  init
 //  Description:  Needed by the flag package to define the variables that are
@@ -82,7 +93,7 @@ func Product(a, b []uint8) []uint8 {
 
 	uintNumberB, err := strconv.ParseUint(stringNumberB, 10, 64)
 	if err != nil {
-		fmt.Println(Stringify(a),stringNumberB)
+		fmt.Println(Stringify(a), stringNumberB)
 		panic(err)
 	}
 
@@ -116,7 +127,7 @@ func Pow(base []uint8, exp uint64) []uint8 {
 //         Name:  Sum
 //  Description:  Sums two integers by:
 //								(1) Checking which number (represented by an array of single
-//								    digits) has more digits 
+//								    digits) has more digits
 //  							(2) The number with fewer digits is filled with zeros until
 //  							    both arrays have an equal length
 //								(3) Performs the addition of the two numbers
@@ -239,7 +250,7 @@ func ClearTerminalScreen() {
 
 // ===  FUNCTION  ==============================================================
 //         Name:  DisplayProgressBar
-//  Description:  
+//  Description:
 // =============================================================================
 func DisplayProgressBar(current, total uint64, action string) {
 	if total > 2 {

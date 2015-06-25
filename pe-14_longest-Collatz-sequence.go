@@ -1,3 +1,31 @@
+//
+//    Description:  The following iterative sequence is defined for the set
+//                  of positive integers:
+//
+//                  n --> n/2 (n is even)
+//                  n --> 3n + 1 (n is odd)
+//
+//                  Using the rule above and starting with 13, we generate
+//                  the following sequence:
+//                  13 --> 40 --> 20 --> 10 --> 5 --> 16 --> 8 --> 4 --> 2 --> 1
+//
+//                  It can be seen that this sequence (starting at 13 and
+//                  finishing at 1) contains 10 terms. Although it has not
+//                  been proved yet (Collatz Problem), it is thought that
+//                  all starting numbers finish at 1.
+//
+//       Question:  Which starting number, under one million, produces the
+//                  longest chain?
+//                  NOTE: Once the chain starts the terms are allowed to go
+//                  above one million.
+//
+//       Compiler:  go
+//
+//          Usage:  go run pe-14_longest-Collatz-sequence.go
+//
+//        License:  GNU General Public License
+//      Copyright:  Copyright (c) 2014, Frank Milde
+
 package main
 
 import (
@@ -78,7 +106,7 @@ func ConstructSequence(number uint64) uint64 {
 
 // ===  FUNCTION  ==============================================================
 //         Name:  DisplaySequence
-//  Description:  
+//  Description:
 // =============================================================================
 func DisplaySequence(number uint64) {
 	if number < 10 {
@@ -115,7 +143,7 @@ func ClearTerminalScreen() {
 
 // ===  FUNCTION  ==============================================================
 //         Name:  DisplayProgressBar
-//  Description:  
+//  Description:
 // =============================================================================
 func DisplayProgressBar(current, total int, action string) {
 	percent := current * 100 / total

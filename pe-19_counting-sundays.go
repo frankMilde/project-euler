@@ -1,6 +1,3 @@
-// =============================================================================
-//
-//       Filename:  pe-19_counting-sundays.go
 //
 //    Description:  You are given the following information, but you may prefer
 //                  to do some research for yourself.
@@ -17,17 +14,11 @@
 //       Question:  How many Sundays fell on the first of the month during the
 //                  twentieth century (1 Jan 1901 to 31 Dec 2000)?
 //
-//        Version:  1.0
-//        Created:  Mon May 27 11:41:29 2013
-//       Revision:  
-//
 //       Compiler:  go
 //
-//         Author:  FRANK MILDE (), frank@itp.physik.tu-berlin.de
-//   Organization:  TU Berlin
-//
-//           TODO:
-// =============================================================================
+//        License:  GNU General Public License
+//      Copyright:  Copyright (c) 2015, Frank Milde
+
 package main
 
 //------------------------------------------------------------------------------
@@ -77,10 +68,6 @@ const (
 	NrOfMonths
 )
 
-// ===  FUNCTION  ==============================================================
-//         Name:  main
-//  Description:  
-// =============================================================================
 func main() {
 	fmt.Println("Number of Sundays", GetNumberOfSundays(1901, 2001))
 }
@@ -144,35 +131,17 @@ func GetDaysOfYear(year Year) Day {
 func GetDaysOfMonth(month Month, year Year) Day {
 	var daysInThisMonth Day
 
-	switch {
-	case month == Jan:
+	switch month {
+	case Jan, Mar, May, Jul, Aug, Oct, Dec:
 		daysInThisMonth = 31
-	case month == Feb:
+	case Feb:
 		if IsLeapYear(year) == true {
 			daysInThisMonth = 29
 		} else {
 			daysInThisMonth = 28
 		}
-	case month == Mar:
-		daysInThisMonth = 31
-	case month == Apr:
+	case Apr, Jun, Sep, Nov:
 		daysInThisMonth = 30
-	case month == May:
-		daysInThisMonth = 31
-	case month == Jun:
-		daysInThisMonth = 30
-	case month == Jul:
-		daysInThisMonth = 31
-	case month == Aug:
-		daysInThisMonth = 31
-	case month == Sep:
-		daysInThisMonth = 30
-	case month == Oct:
-		daysInThisMonth = 31
-	case month == Nov:
-		daysInThisMonth = 30
-	case month == Dec:
-		daysInThisMonth = 31
 	default:
 		daysInThisMonth = -1
 	}

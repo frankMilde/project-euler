@@ -1,3 +1,15 @@
+//
+//    Description:  The sum of the primes below 10 is 2 + 3 + 5 + 7 = 17.
+//
+//       Question:  Find the sum of all the primes below two million.
+//
+//       Compiler:  go
+//
+//          Usage:  go run pe-10_sumPrimes_sieveAlgo_concurrent.go -l 2000000
+//
+//        License:  GNU General Public License
+//      Copyright:  Copyright (c) 2014, Frank Milde
+
 package main
 
 import (
@@ -20,6 +32,8 @@ func main() {
 	flag.Parse()
 	CheckLimitIsOkOrDie(limit)
 
+	// using the
+	// https://en.wikipedia.org/wiki/Sieve_of_Eratosthenes
 	sum, last_prime, nr_of_primes := SumUpTo(limit)
 	DisplayResults(sum, last_prime, limit, nr_of_primes)
 
@@ -35,7 +49,7 @@ func main() {
 // =============================================================================
 func init() {
 	const (
-		defaultLimit = 4200000000
+		defaultLimit = 400000000
 		usage        = "Find all primes below this limit"
 	)
 	flag.Uint64Var(&limit, "limit", defaultLimit, usage)
@@ -44,7 +58,7 @@ func init() {
 
 // ===  FUNCTION  ==============================================================
 //         Name:  CheckLimitIsOkOrDie
-//  Description:  If user input of "limit" exceed the max number of slice 
+//  Description:  If user input of "limit" exceed the max number of slice
 //                elements: Panic
 // =============================================================================
 func CheckLimitIsOkOrDie(limit uint64) {
@@ -57,7 +71,7 @@ func CheckLimitIsOkOrDie(limit uint64) {
 
 // ===  FUNCTION  ==============================================================
 //         Name:  GeneratePanicMsg
-//  Description:  
+//  Description:
 // =============================================================================
 func GeneratePanicMsg(limit uint64) string {
 	overMaxElements := limit - maxSliceElements
@@ -97,7 +111,7 @@ func DisplayResults(sum, last_prime, limit uint64, nr_of_primes int) {
 // ===  FUNCTION  ==============================================================
 //         Name:  SumUpTo
 //  Description:  Calculates the sum of all primes below a given limit.
-//                Returns 
+//                Returns
 //                (1) sum
 //                (2) the highest prime below the limit
 //                (3) total number of primes below the limit
@@ -115,21 +129,23 @@ func SumUpTo(limit uint64) (uint64, uint64, int) {
 		}
 	}()
 
-	primes := make(chan uint64)
-	go FindPrimes(limit, primes)
+	primesCh := make(chan uint64)
+	go FindPrimes(limit, primesCh)
 
 	var sum uint64 = 0
 	var prime uint64 = 0
-	for prime = range primes {
+	var nr_of_primes int = 0
+	for prime = range primesCh {
 		sum += prime
 		n, err := io.WriteString(f, strconv.FormatUint(prime, 10)+"\n")
 		if err != nil {
 			fmt.Println(n)
 			panic(err)
 		}
+		nr_of_primes++
 	}
 	fmt.Println("\n\nWriting data to " + filename)
-	return sum, prime, len(primes)
+	return sum, prime, nr_of_primes
 }
 
 // ===  FUNCTION  ==============================================================
@@ -150,7 +166,7 @@ func FindPrimes(limit uint64, out_ch chan<- uint64) {
 	var i uint64 = 1 // next prime
 	var j uint64 = 0 // multiples of next prime
 
-	action := "Finding all primes below " + strconv.FormatUint(limit, 10) + "... "
+	action := "Finding all primes below " + strconv.FormatUint(limit, 10) + "... this might take a while."
 
 	fmt.Println(action)
 	// no need to go till sieve_bound:
@@ -174,7 +190,7 @@ func FindPrimes(limit uint64, out_ch chan<- uint64) {
 
 // ===  FUNCTION  ==============================================================
 //         Name:  DisplayProgressBar
-//  Description:  
+//  Description:
 // =============================================================================
 func DisplayProgressBar(current, total uint64, action string) {
 	percent := current * 100 / total
