@@ -15,14 +15,14 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io"
+	//"io"
 	"os"
 	"strconv"
 	"strings"
 	"time"
 )
 
-const maxSliceElements uint64 = 1<<32 - 1
+const maxSliceElements uint64 = 1<<64 - 1
 
 var limit uint64
 
@@ -117,17 +117,21 @@ func DisplayResults(sum, last_prime, limit uint64, nr_of_primes int) {
 //                (3) total number of primes below the limit
 // =============================================================================
 func SumUpTo(limit uint64) (uint64, uint64, int) {
-	filename := "primes.dat"
+	// Writing primes to file is disabled, as it takes to long for high input
+	// numbers.
+	/*
+		filename := "primes.dat"
 
-	f, err := os.Create(filename)
-	if err != nil {
-		panic(err)
-	}
-	defer func() {
-		if f.Close() != nil {
+		f, err := os.Create(filename)
+		if err != nil {
 			panic(err)
 		}
-	}()
+		defer func() {
+			if f.Close() != nil {
+				panic(err)
+			}
+		}()
+	*/
 
 	primesCh := make(chan uint64)
 	go FindPrimes(limit, primesCh)
@@ -135,16 +139,19 @@ func SumUpTo(limit uint64) (uint64, uint64, int) {
 	var sum uint64 = 0
 	var prime uint64 = 0
 	var nr_of_primes int = 0
+
 	for prime = range primesCh {
 		sum += prime
-		n, err := io.WriteString(f, strconv.FormatUint(prime, 10)+"\n")
-		if err != nil {
-			fmt.Println(n)
-			panic(err)
-		}
+		/*
+			n, err := io.WriteString(f, strconv.FormatUint(prime, 10)+"\n")
+			if err != nil {
+				fmt.Println(n)
+				panic(err)
+			}
+		*/
 		nr_of_primes++
 	}
-	fmt.Println("\n\nWriting data to " + filename)
+	//fmt.Println("\n\nWriting data to " + filename)
 	return sum, prime, nr_of_primes
 }
 
@@ -165,8 +172,7 @@ func FindPrimes(limit uint64, out_ch chan<- uint64) {
 	sieved_numbers := make([]bool, sieve_bound)
 	var i uint64 = 1 // next prime
 	var j uint64 = 0 // multiples of next prime
-
-	action := "Finding all primes below " + strconv.FormatUint(limit, 10) + "... this might take a while."
+	action := "Finding all primes below " + strconv.FormatUint(limit/1000000, 10) + " Mio... this might take a while."
 
 	fmt.Println(action)
 	// no need to go till sieve_bound:
